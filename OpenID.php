@@ -5,18 +5,17 @@
  * The return_to url should be the location of this file.
  * The returned info I think is enough to parse sreg data out of
  * but this doesn't do it for you. Try using parse_url().
- * @todo this stopped working but I still get sreg info?
-
-if(false !== $result = openid_verify()) {
-    print 'Welcome, user.';
-} else {
-    print '
-        <form method="post" action="" class="openid">
-        <input type="url" name="openid_verify">
-        <input type="submit" value="Log In [OpenID]">
-        </form>
-    ';
-}
+ 
+    if($user = openid_verify()) {
+        print 'You have authenticated!';
+    } else {
+        print '
+            <form method="post" action="" class="openid">
+            <input type="url" name="openid_verify">
+            <input type="submit" value="Log In [OpenID]">
+            </form>
+        ';
+    }
 
 */
 function openid_verify($return_to = null, array $params = []) {
@@ -41,9 +40,9 @@ function openid_verify($return_to = null, array $params = []) {
             'method' => 'GET',
             'headers' => 'Accept: application/xrds+xml',
         ]]);
-        $response = file_get_contents($url, null, $c);
+        $res = file_get_contents($url, null, $c);
         libxml_use_internal_errors(true);
-        $xrds = simplexml_load_string($response);
+        $xrds = simplexml_load_string($res);
         if(isset($xrds->XRD->Service->URI)) {
             $next = $xrds->XRD->Service->URI;
         }
@@ -55,21 +54,17 @@ function openid_verify($return_to = null, array $params = []) {
         exit(0);
     } elseif(isset($_GET['openid_mode'], $_GET['openid_op_endpoint']) && $_GET['openid_mode'] == 'id_res') {
         $url = $_GET['openid_op_endpoint'];
-        $data = str_replace(
+        $query = str_replace(
             'openid.mode=id_res',
             'openid.mode=check_authentication',
             getenv('QUERY_STRING')
         );
-        $ch = curl_init($url);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYHOST => false,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_POSTFIELDS => $data
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-        return 0 === stripos(trim($response), 'is_valid:true');
+        $c = stream_context_create(['http' => [
+            'method' => 'POST',
+            'content' => $query,
+            'header' => 'Content-Type: application/x-www-form-urlencoded',
+        ]]);
+        $res = file_get_contents($url, null, $c);
+        return 0 === stripos(trim($res), 'is_valid:true');
     }
 }
