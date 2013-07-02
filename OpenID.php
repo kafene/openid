@@ -6,9 +6,19 @@
  * The returned info I think is enough to parse sreg data out of
  * but this doesn't do it for you. Try using parse_url().
  * @todo this stopped working but I still get sreg info?
- * # echo openid_verify();
+
+if(false !== $result = openid_verify()) {
+    print 'Welcome, user.';
+} else {
+    print '
+        <form method="post" action="" class="openid">
+        <input type="url" name="openid_verify">
+        <input type="submit" value="Log In [OpenID]">
+        </form>
+    ';
+}
+
 */
-echo openid_verify();
 function openid_verify($return_to = null, array $params = []) {
     if(!$return_to) {
         $return_to = 'http://'.getenv('HTTP_HOST').(getenv('REQUEST_URI') ?: '/');
@@ -61,12 +71,5 @@ function openid_verify($return_to = null, array $params = []) {
         $response = curl_exec($ch);
         curl_close($ch);
         return 0 === stripos(trim($response), 'is_valid:true');
-    } else {
-        return '
-            <form method="post" action="" class="openid">
-            <input type="url" name="openid_verify">
-            <input type="submit" value="Log In [OpenID]">
-            </form>
-        ';
     }
 }
