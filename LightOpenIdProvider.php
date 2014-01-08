@@ -1,5 +1,8 @@
 <?php
 
+# ! ATTN ! Do not use this, it hasn't been completed.
+# Original source - https://gitorious.org/lightopenid
+
 /*
 (new LightOpenIdProvider([
     'username' => 'jdoe',
@@ -90,6 +93,7 @@ class LightOpenIdProvider
     {
         $this->config = $config;
         $this->assoc = [];
+
         # If we use select_id, we must disable it for identity pages,
         # so that an RP can discover it and get proper data (i.e. without select_id)
         if ($this->getParam('id')) {
@@ -110,23 +114,49 @@ class LightOpenIdProvider
     {
         $key_a = $key;
         $key_b = str_replace('_', '.', $key);
-        if (isset($this->config['env'], $this->config['env'][$key_a])) {
+
+        if (isset($this->config['env'], $this->config['env'][$key_a]))
+        {
             return $this->config['env'][$key_a];
-        } elseif (isset($this->config['env'], $this->config['env'][$key_b])) {
+        }
+
+        elseif (isset($this->config['env'], $this->config['env'][$key_b]))
+        {
             return $this->config['env'][$key_b];
-        } elseif ($result_a = getenv($key_a)) {
+        }
+
+        elseif ($result_a = getenv($key_a))
+        {
             return $result_a;
-        } elseif ($result_b = getenv($key_b)) {
+        }
+
+        elseif ($result_b = getenv($key_b))
+        {
             return $result_b;
-        } elseif (isset($_ENV, $_ENV[$key_a])) {
+        }
+
+        elseif (isset($_ENV, $_ENV[$key_a]))
+        {
             return $_ENV[$key_a];
-        } elseif (isset($_ENV, $_ENV[$key_b])) {
+        }
+
+        elseif (isset($_ENV, $_ENV[$key_b]))
+        {
             return $_ENV[$key_b];
-        } elseif (isset($_SERVER, $_SERVER[$key_a])) {
+        }
+
+        elseif (isset($_SERVER, $_SERVER[$key_a]))
+        {
             return $_SERVER[$key_a];
-        } elseif (isset($_SERVER, $_SERVER[$key_b])) {
+        }
+
+        elseif (isset($_SERVER, $_SERVER[$key_b]))
+        {
             return $_SERVER[$key_b];
-        } else {
+        }
+
+        else
+        {
             return $default;
         }
     }
@@ -144,23 +174,49 @@ class LightOpenIdProvider
     {
         $key_a = $key;
         $key_b = str_replace('_', '.', $key);
-        if (isset($this->config['params'], $this->config['params'][$key_a])) {
+
+        if (isset($this->config['params'], $this->config['params'][$key_a]))
+        {
             return $this->config['params'][$key_b];
-        } elseif (isset($this->config['params'], $this->config['params'][$key_b])) {
+        }
+
+        elseif (isset($this->config['params'], $this->config['params'][$key_b]))
+        {
             return $this->config['params'][$key_b];
-        } elseif (isset($_POST, $_POST[$key_a])) {
+        }
+
+        elseif (isset($_POST, $_POST[$key_a]))
+        {
             return $_POST[$key_a];
-        } elseif (isset($_POST, $_POST[$key_b])) {
+        }
+
+        elseif (isset($_POST, $_POST[$key_b]))
+        {
             return $_POST[$key_b];
-        } elseif (isset($_GET, $_GET[$key_a])) {
+        }
+
+        elseif (isset($_GET, $_GET[$key_a]))
+        {
             return $_GET[$key_a];
-        } elseif (isset($_GET, $_GET[$key_b])) {
+        }
+
+        elseif (isset($_GET, $_GET[$key_b]))
+        {
             return $_GET[$key_b];
-        } elseif (isset($_REQUEST, $_REQUEST[$key_a])) {
+        }
+
+        elseif (isset($_REQUEST, $_REQUEST[$key_a]))
+        {
             return $_REQUEST[$key_a];
-        } elseif (isset($_REQUEST, $_REQUEST[$key_b])) {
+        }
+
+        elseif (isset($_REQUEST, $_REQUEST[$key_b]))
+        {
             return $_REQUEST[$key_b];
-        } else {
+        }
+
+        else
+        {
             return $default;
         }
     }
@@ -176,6 +232,7 @@ class LightOpenIdProvider
         if (empty($this->config['params'])) {
             $this->config['params'] = [];
         }
+
         $this->config['params'][$key] = $value;
     }
 
@@ -189,6 +246,7 @@ class LightOpenIdProvider
         if (empty($this->config['params'])) {
             $this->config['params'] = [];
         }
+
         return $this->config['params'];
     }
 
@@ -218,6 +276,7 @@ class LightOpenIdProvider
         if (!empty($this->config['server_location'])) {
             return $this->config['server_location'];
         }
+
         $https = filter_var($this->getEnv('HTTPS'), FILTER_VALIDATE_BOOLEAN);
         $http = $https ? 'https://' : 'http://';
         $port = (int) $this->getEnv('SERVER_PORT');
@@ -225,18 +284,23 @@ class LightOpenIdProvider
             ? ''
             : ':'.$port;
         $host = $this->getEnv('HTTP_HOST');
+
         if (!$host) {
             $host = $this->getEnv('SERVER_NAME');
         }
+
         if (!$host) {
             $host = $this->getEnv('SERVER_ADDR');
         }
+
         if (!$host) {
             static::raise('Failed to detect server host name.');
         }
+
         $path = $this->getEnv('REQUEST_URI', '/');
         $path = preg_replace('/\?.*$/', '', $path);
         $path = ltrim($path, '/');
+
         return $http.$host.$port.'/'.$path;
     }
 
@@ -253,12 +317,15 @@ class LightOpenIdProvider
         if (!empty($this->config['xrds_location'])) {
             return $this->config['xrds_location'];
         }
+
         $xrdsLocation = $this->getServerLocation();
+
         if (false !== strpos($location, '?')) {
             $xrdsLocation .= '&xrds';
         } else {
             $xrdsLocation .= '?xrds';
         }
+
         return $xrdsLocation;
     }
 
@@ -276,6 +343,7 @@ class LightOpenIdProvider
             'm2CBRYHNOyyjmG0mg3BVd9RcLn5S3IHHoXGHblzqdLFEi/368Ygo79JRnxTkXjgmY0'.
             'rxlJ5bU1zIKaSDuKdiI+XUkKJX8Fvf8W8vsixYOr';
         $spec->defaultGen = 'Ag==';
+
         return $spec;
     }
 
@@ -293,14 +361,19 @@ class LightOpenIdProvider
     protected function &math()
     {
         static $math;
+
         if (!empty($this->config['math_functions'])) {
             return $this->config['math_functions'];
         }
+
         if (!function_exists('hash_algos')) {
             static::raise('Your PHP installation is missing the hash_algos function.');
         }
-        if (!$math && function_exists('gmp_init')) {
+
+        if (!$math && function_exists('gmp_init'))
+        {
             $math = new \StdClass;
+
             $math->mul = function ($a, $b) {
                 return gmp_mul((string) $a, (string) $b);
             };
@@ -319,8 +392,11 @@ class LightOpenIdProvider
             $math->powmod = function ($a, $b, $c) {
                 return gmp_powm((string) $a, (string) $b, (string) $c);
             };
-        } elseif (!$math && function_exists('bcadd')) {
+        }
+        elseif (!$math && function_exists('bcadd'))
+        {
             $math = new \StdClass;
+
             $math->mul = function ($a, $b) {
                 return bcmul((string) $a, (string) $b);
             };
@@ -339,9 +415,13 @@ class LightOpenIdProvider
             $math->powmod = function ($a, $b) {
                 return bcpowmod((string) $a, (string) $b, (string) $c);
             };
-        } else {
+        }
+
+        else
+        {
             static::raise('Your PHP installation is missing one of GMP or BCMath.');
         }
+
         return $math;
     }
 
@@ -357,6 +437,7 @@ class LightOpenIdProvider
         if (isset($this->config['username'])) {
             return $this->config['username'];
         }
+ 
         static::raise('No username specified in the configuration.');
     }
 
@@ -374,6 +455,7 @@ class LightOpenIdProvider
         if (isset($this->config['password'])) {
             return $this->config['password'];
         }
+
         static::raise('No password specified in the configuration.');
     }
 
@@ -418,23 +500,28 @@ class LightOpenIdProvider
     {
         $default = ['nonce', 'nc', 'cnonce', 'qop', 'username', 'uri', 'response'];
         $digest = $this->getEnv('PHP_AUTH_DIGEST');
+
         if (
             !$digest ||
             !preg_match_all('/(\w+)="?([^",]+)"?/', $digest, $matches)
         ) {
             return false;
         }
+
         $data = array_combine($matches[1] + $default, $matches[2]);
+
         $a1 = $this->getA1()
             ?: md5(join(':', [
                 $data['username'],
                 $realm,
                 $this->getPassword(),
             ]));
+
         $a2 = md5(join(':', [
             $this->getEnv('REQUEST_METHOD'),
             $data['uri'],
         ]));
+
         $valid = md5(join(':', [
             $a1,
             $data['nonce'],
@@ -443,21 +530,26 @@ class LightOpenIdProvider
             $data['qop'],
             $a2,
         ]));
+
         if (0 !== strcmp($data['response'], $valid)) {
             return false;
         }
+
         # Returning identity
         # It can be any url that leads here, or to any other place that hosts
         # an XRDS document pointing here.
         # @todo - can move ?id= somewhere configurable?
         # maybe $this->config['identity_url_format'] = sprintf(%s?id=%s)
         $identityUrl = $this->getServerLocation();
+
         if (false !== strpos($location, '?')) {
             $identityUrl .= '&id=';
         } else {
             $identityUrl .= '?id=';
         }
+
         $identityUrl .= $this->getUsername();
+
         return $identityUrl;
     }
 
@@ -484,7 +576,9 @@ class LightOpenIdProvider
         $realm = 'realm="'.$this->getParam('openid_realm').'"';
         $format = 'Digest ';
         $header = sprintf($format, $realm, uniqid('', true), md5($realm));
+
         header('HTTP/1.1 401 Unauthorized', true, 401);
+
         header(join('', [
             'WWW-Authenticate: Digest ',
             'realm="'.$realm.'",',
@@ -492,6 +586,7 @@ class LightOpenIdProvider
             'nonce="'.$this->assocHandle().'",',
             'opaque="'.md5($realm).'"',
         ]);
+
         exit;
     }
 
@@ -529,15 +624,20 @@ class LightOpenIdProvider
     protected function setAssoc($handle, $assoc)
     {
         $oldSession = session_id();
+
         session_commit();
         session_id($assoc['handle']);
         session_start();
+
         $_SESSION['assoc'] = $assoc;
+
         session_commit();
+
         if ($oldSession) {
             session_id($oldSession);
             session_start();
         }
+
         return $oldSession;
     }
 
@@ -551,18 +651,24 @@ class LightOpenIdProvider
     protected function getAssoc($handle)
     {
         $oldSession = session_id();
+
         session_commit();
         session_id($handle);
         session_start();
+
         $assoc = null;
+
         if (!empty($_SESSION['assoc'])) {
             $assoc = $_SESSION['assoc'];
         }
+
         session_commit();
+
         if ($oldSession) {
             session_id($oldSession);
             session_start();
         }
+
         return $assoc;
     }
 
@@ -575,11 +681,14 @@ class LightOpenIdProvider
      */
     protected function delAssoc($handle)
     {
+
         $oldSession = session_id();
+
         session_commit();
         session_id($handle);
         session_start();
         session_destroy();
+
         if ($oldSession) {
             session_id($oldSession);
             session_start();
@@ -595,6 +704,7 @@ class LightOpenIdProvider
     protected function redirect($location)
     {
         header('Location: '.$location);
+
         exit;
     }
 
@@ -617,9 +727,11 @@ class LightOpenIdProvider
     {
         $length = ('sha256' === $hash) ? 256 : 20;
         $secret = '';
+
         for ($i = 0; $i < $length; $i++) {
             $secret .= mt_rand(0,255);
         }
+
         return $secret;
     }
 
@@ -631,10 +743,13 @@ class LightOpenIdProvider
     protected function keyGen($length)
     {
         $key = '';
+
         for ($i = 1; $i < $length; $i++) {
             $key .= mt_rand(0,9);
         }
+
         $key .= mt_rand(1,9);
+
         return $key;
     }
 
@@ -647,20 +762,26 @@ class LightOpenIdProvider
     {
         if ($force) {
             print $this->getXrdsContent();
+
             exit;
         }
+
         if (false === $force) {
             header('X-XRDS-Location: '.$this->getXrdsLocation());
+
             return;
         }
+
         if (
             array_key_exists('xrds', $this->getParams()) ||
             (false !== stripos($this->getEnv('HTTP_ACCEPT'), 'application/xrds+xml'))
         ) {
             header('Content-Type: application/xrds+xml');
             print $this->getXrdsContent();
+
             exit;
         }
+
         header('X-XRDS-Location: '.$this->getXrdsLocation());
     }
 
@@ -674,6 +795,7 @@ class LightOpenIdProvider
         $type = $this->selectId ? 'server' : 'signon';
         $type = sprintf('%s/%s', $this->spec()->ns, $type);
         $uri = $this->getServerLocation();
+
         return join("\n", [
             '<?xml version="1.0" encoding="UTF-8"?>';
             '<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">';
@@ -694,6 +816,7 @@ class LightOpenIdProvider
     {
         if ($paramAssocHandle = $this->getParam('openid_assoc_handle')) {
             $this->assoc = $this->getAssoc($paramAssocHandle);
+
             if (isset($this->assoc['data'])) {
                 # We have additional data stored for setup.
                 $params = $this->getParams();
@@ -702,39 +825,52 @@ class LightOpenIdProvider
                 unset($this->assoc['data']);
             }
         }
+
         if ($this->getParam('openid_ns') === $this->spec()->ns) {
             $paramOpenIdMode = $this->getParam('openid_mode');
+
             if (!$paramOpenIdMode) {
                 $this->errorResponse();
             }
+
             switch($paramOpenIdMode) {
                 case 'checkid_immediate':
                 case 'checkid_setup':
+
                     $this->checkRealm();
                     # We support AX xor SREG.
                     $attributes = $this->ax();
+
                     if (!$attributes) {
                         $attributes = $this->sreg();
                     }
+
                     # Even if some user is authenticated, we need to know if it's
                     # the same one that want's to authenticate.
                     # Of course, if we use select_id, we accept any user.
-                    if (
-                        ($identity = $this->checkId($this->getParam('openid_realm'), $attrValues)) &&
-                        ($this->select_id || $identity === $this->getParam('openid_identity'))
-                    ) {
+                    if (($identity = $this->checkId($this->getParam('openid_realm'), $attrValues)) &&
+                        ($this->select_id || $identity === $this->getParam('openid_identity')))
+                    {
                         $this->positiveResponse($identity, $attrValues);
-                    } elseif ('checkid_immediate' === $paramOpenIdMode) {
+                    }
+
+                    elseif ('checkid_immediate' === $paramOpenIdMode)
+                    {
                         $this->redirect($this->response([
                             'openid.mode' => 'setup_needed'
                         ]));
-                    } else {
+                    }
+
+                    else
+                    {
                         if (!$this->assoc) {
                             $this->generateAssociation();
                             $this->assoc['private'] = true;
                         }
+
                         $this->assoc['data'] = $this->getParams();
                         $this->setAssoc($this->assoc['handle'], $this->assoc);
+
                         $this->setup(
                             $this->getParam('openid_identity'),
                             $this->getParam('openid_realm'),
@@ -742,23 +878,34 @@ class LightOpenIdProvider
                             $attributes
                         );
                     }
+
                     break;
+
                 case 'associate':
+
                     $this->associate();
+
                     break;
+
                 case 'check_authentication':
+
                     $this->checkRealm();
+
                     if ($this->verify()) {
                         print "ns:".$this->spec()->ns."\nis_valid:true";
+
                         if (false !== strpos($this->getParam('openid_signed'),'invalidate_handle')) {
                             print "\ninvalidate_handle:".$this->getParam('openid_invalidate_handle');
                         }
                     } else {
                         print "ns:".$this->spec()->ns."\nis_valid:false";
                     }
+
                     exit;
                     break;
+
                 default:
+
                     $this->errorResponse();
             }
         } else {
@@ -770,10 +917,13 @@ class LightOpenIdProvider
     {
         $paramReturnTo = $this->getParam('openid_return_to');
         $paramRealm = $this->getParam('openid_realm');
+
         if (!$paramReturnTo || !$paramRealm) {
             $this->errorResponse();
         }
+
         $realm = str_replace('\*', '[^/]', preg_quote($paramRealm));
+
         if (!preg_match("#^$realm#", $paramReturnTo)) {
             $this->errorResponse();
         }
@@ -783,9 +933,11 @@ class LightOpenIdProvider
     {
         # Namespace prefix that the fields must have.
         $ns = 'http://axschema.org/';
+
         # First, we must find out what alias is used for AX.
         # Let's check the most likely one
         $alias = null;
+
         if ('http://openid.net/srv/ax/1.0' === $this->getParam('openid_ns_ax')) {
             $alias = 'ax';
         } else {
@@ -799,40 +951,53 @@ class LightOpenIdProvider
                 }
             }
         }
+
         if (!$alias) {
             return null;
         }
+
         $fields = [];
+
         # Now, we must search again, this time for field aliases
         foreach ($this->getParams() as $paramName => $paramValue) {
             $paramName = str_replace('.', '_', $paramName);
+
             if (
                 (false === strpos($paramName, 'openid_'.$alias.'_type')) ||
                 (false === strpos($paramValue, $ns))
             ) {
                 continue;
             }
+
             $paramName = substr($paramName, strlen('openid_'.$alias.'_type_'));
             $paramValue = substr($paramValue, strlen($ns));
             $fields[$paramName] = $paramValue;
         }
+
         # Then, we find out what fields are required and optional
         $required = $ifAvailable = [];
+
         foreach(['required','ifAvailable'] as $type) {
             $paramValue = $this->getParam("openid_{$alias}_{$type}");
+
             if (!$paramValue)) {
                 continue;
             }
+
             $attributes = preg_split('/\s*,\s*/', $paramValue);
+
             foreach ($attributes as $attr) {
                 if (empty($fields[$attr])) {
                     # There is an undefined field here, so we ignore it.
                     continue;
                 }
+
                 ${$type}[] = $fields[$attr];
             }
         }
+
         $this->setParam('ax', true);
+
         return [
             'required' => $required,
             'optional' => $ifAvailable
@@ -845,18 +1010,23 @@ class LightOpenIdProvider
         $attributes = ['required' => [], 'optional' => []];
         $paramSregRequired = $this->getParam('openid_sreg_required');
         $paramSregOptional = $this->getParam('openid_sreg_optional');
+
         if (!$paramSregRequired && !$paramSregOptional) {
             return $attributes;
         }
+
         $required = $optional = [];
+
         foreach (['required', 'optional'] as $type) {
             $paramValue = $this->getParam('openid_sreg_'.$type, '');
+
             foreach (preg_split('/\s*,\s*/', $paramValue) as $attr) {
                 if (empty($sregToAx[$attr])) {
                     # Undefined attribute in SREG request.
                     # Shouldn't happen, but we check anyway.
                     continue;
                 }
+
                 $attributes[$type][] = $sreg_to_ax[$attr];
             }
         }
@@ -876,19 +1046,23 @@ class LightOpenIdProvider
         if (empty($this->assoc)) {
             return false;
         }
+
         # Next, we check that it's a private association,
         # i.e. one made without RP input.
         # Otherwise, the RP shouldn't ask us to verify.
         if (empty($this->assoc['private'])) {
             return false;
         }
+
         # Now we have to check if the nonce is correct, to prevent replay attacks.
         if ($this->getParam('openid_response_nonce') !== $this->assoc['nonce']) {
             return false;
         }
+
         # Getting the signed fields for signature.
         $sig = [];
         $signed = preg_split('/\s*,\s*/', $this->getParam('openid_signed', ''));
+
         foreach ($signed as $field) {
             $name = strtr($field, '.', '_');
             $fieldValue = $this->getParam('openid_'.$name);
@@ -897,6 +1071,7 @@ class LightOpenIdProvider
             }
             $sig[$field] = $fieldValue;
         }
+
         # Computing the signature and checking if it matches.
         $sig = $this->keyValueForm($sig);
         $encoded = base64_encode(hash_hmac(
@@ -905,11 +1080,14 @@ class LightOpenIdProvider
             $this->assoc['mac'],
             true
         ));
+
         if ($this->getParam('openid_sig') !== $encoded) {
             return false;
         }
+
         # Clearing the nonce, so that it won't be used again.
         $this->assoc['nonce'] = null;
+
         if (empty($this->assoc['private'])) {
             # Commiting changes to the association.
             $this->setAssoc($this->assoc['handle'], $this->assoc);
@@ -917,6 +1095,7 @@ class LightOpenIdProvider
             # Private associations shouldn't be used again, se we can as well delete them.
             $this->delAssoc($this->assoc['handle']);
         }
+
         # Nothing has failed, so the verification was a success.
         return true;
     }
@@ -933,12 +1112,14 @@ class LightOpenIdProvider
         ) {
             $this->directErrorResponse();
         }
+
         # Creating the association
         $this->assoc = [];
         $this->assoc['hash'] = ('HMAC-SHA256' === $this->getParam('openid_assoc_type'))
             ? 'sha256'
             : 'sha1';
         $this->assoc['handle'] = $this->assocHandle();
+
         # Getting the shared secret
         if ($this->getParam('openid_session_type') == 'no-encryption') {
             $sharedSecret = $this->sharedSecret($this->assoc['hash']);
@@ -946,6 +1127,7 @@ class LightOpenIdProvider
         } else {
             $this->dh();
         }
+
         # Preparing the direct response...
         $response = [
             'ns' => $this->spec()->ns,
@@ -954,12 +1136,14 @@ class LightOpenIdProvider
             'session_type' => $this->getParam('openid_session_type'),
             'expires_in' => $this->getAssocLifetime()
         ];
+
         if (isset($this->assoc['dh_server_public'])) {
             $response['dh_server_public'] = $this->assoc['dh_server_public'];
             $response['enc_mac_key'] = $this->assoc['mac'];
         } else {
             $response['mac_key'] = $this->assoc['mac'];
         }
+
         print $this->keyValueForm($response);
         exit;
     }
@@ -984,15 +1168,19 @@ class LightOpenIdProvider
         $paramModulus = $this->getParam('openid_dh_modulus');
         $paramDhGen = $this->getParam('openid_dh_gen');
         $paramDhConsumerPublic = $this->getParam('openid_dh_consumer_public');
+
         if (!$paramModulus) {
             $this->setParam('openid_dh_modulus', $this->spec()->defaultModulus);
         }
+
         if ($paramDhGen) {
-            $this->setParam('openid_dh_gen', $this->spec()->defaultGen;
+            $this->setParam('openid_dh_gen', $this->spec()->defaultGen);
         }
+
         if (!$paramDhConsumerPublic) {
             $this->directErrorResponse();
         }
+
         $modulus = $this->b64dec($this->getParam('openid_dh_modulus'));
         $gen = $this->b64dec($this->getParam('openid_dh_gen'));
         $consumerKey = $this->b64dec($this->getParam('openid_dh_consumer_public'));
@@ -1018,6 +1206,7 @@ class LightOpenIdProvider
     protected function xor($a, $b)
     {
         $length = strlen($a);
+
         for($i = 0; $i < $length; $i++) {
             $a[$i] = $a[$i] ^ $b[$i];
         }
@@ -1033,6 +1222,7 @@ class LightOpenIdProvider
     protected function response($params)
     {
         $params += ['openid.ns' => $this->spec()->ns];
+
         return $this->getParam('openid_return_to').
              (strpos($this->getParam('openid_return_to'), '?') ? '&' : '?').
              http_build_query($params, '', '&');
@@ -1050,11 +1240,13 @@ class LightOpenIdProvider
             ]));
         } else {
             header('HTTP/1.1 400 Bad Request', true, 400);
+
             print $this->keyValueForm([
                 'ns' => $this->spec()->ns,
                 'error' => 'Invalid request',
             ]);
         }
+
         exit;
     }
 
@@ -1071,13 +1263,17 @@ class LightOpenIdProvider
             $this->generateAssociation();
             $this->assoc['private'] = true;
         }
+
         # We set openid.identity (and openid.claimed_id if necessary) to our $identity
         $paramIdentity = $this->getParam('openid_identity');
         $paramClaimedId = $this->getParam('openid_claimed_id');
+
         if ($paramIdentity === $paramClaimedId || $this->selectId) {
             $this->setParam('openid_claimed_id', $identity);
         }
+
         $this->setParam('openid_identity', $identity);
+
         # Preparing fields to be signed
         $params = [
             'op_endpoint' => $this->getServerLocation(),
@@ -1088,12 +1284,15 @@ class LightOpenIdProvider
             'response_nonce' => gmdate("Y-m-d\TH:i:s\Z"),
             'assoc_handle' => $this->assoc['handle'],
         ];
+
         $params += $this->responseAttributes($attributes);
+
         # Has the RP used an invalid association handle?
         $paramAssocHandle = $this->getParam('openid_assoc_handle');
         if ($paramAssocHandle && ($paramAssocHandle !== $this->assoc['handle'])) {
             $params['invalidate_handle'] = $paramAssocHandle;
         }
+
         # Signing the $params
         $sig = hash_hmac(
             $this->assoc['hash'],
@@ -1101,18 +1300,22 @@ class LightOpenIdProvider
             $this->assoc['mac'],
             true
         );
+
         $req = [
             'openid.mode' => 'id_res',
             'openid.signed' => join(',', array_keys($params)),
             'openid.sig' => base64_encode($sig),
         ];
+
         # Saving the nonce and commiting the association.
         $this->assoc['nonce'] = $params['response_nonce'];
         $this->setAssoc($this->assoc['handle'], $this->assoc);
+
         # Preparing and sending the response itself
         foreach ($params as $name => $value) {
             $req['openid.'.$name] = $value;
         }
+
         $this->redirect($this->response($req));
     }
 
@@ -1126,24 +1329,30 @@ class LightOpenIdProvider
         if (!$attributes) {
             return [];
         }
+
         $ns = 'http://axschema.org/';
         $response = [];
+
         if ($this->getParam('ax')) {
             $response['ns.ax'] = 'http://openid.net/srv/ax/1.0';
+
             foreach ($attributes as $name => $value) {
                 $alias = strtr($name, '/', '_');
                 $response['ax.type.'.$alias] = $ns.$name;
                 $response['ax.value.'.$alias] = $value;
             }
+
             return $response;
         }
+
         $axToSregMap = $this->getAxToSregMap();
+
         foreach ($attributes as $name => $value) {
-            if (!isset($axToSregMap[$name])) {
-                continue;
+            if (isset($axToSregMap[$name])) {
+                $response['sreg.'.$axToSregMap[$name]] = $value;
             }
-            $response['sreg.'.$axToSregMap[$name]] = $value;
         }
+
         return $response;
     }
 
@@ -1157,9 +1366,11 @@ class LightOpenIdProvider
     protected function keyValueForm(array $params)
     {
         $str = '';
+
         foreach ($params as $name => $value) {
             $str .= sprintf("%s:%s\n", $name, $value);
         }
+
         return $str;
     }
 
@@ -1182,9 +1393,11 @@ class LightOpenIdProvider
     {
         $bytes = unpack('C*', base64_decode($str));
         $n = 0;
+
         foreach ($bytes as $byte) {
             $n = $this->math()->add($this->math()->mul($n, 256), $byte);
         }
+
         return $n;
     }
 
@@ -1198,13 +1411,16 @@ class LightOpenIdProvider
     protected function decb64($num)
     {
         $bytes = [];
+
         while ($num) {
             array_unshift($bytes, $this->math()->mod($num, 256));
             $num = $this->div($num, 256);
         }
+
         if ($bytes && $bytes[0] > 127) {
             array_unshift($bytes,0);
         }
+
         array_unshift($bytes, 'C*');
         return base64_encode(call_user_func_array('pack', $bytes));
     }
